@@ -21,6 +21,7 @@
 #include <QScrollBar>
 #include <QVBoxLayout>
 #include <QtDebug>
+#include <gpstools.h>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -40,6 +41,11 @@ Widget::Widget(QWidget *parent)
     connect(_mapView, SIGNAL(regionChanged(QMCoordinateRegion)),
             this, SLOT(onRegionChanged(QMCoordinateRegion)));
     connect(_mapView, SIGNAL(mapBecameIdle()), this, SLOT(onMapBecameIdle()));
+    timer = new QTimer();
+    timer->setInterval(3000);
+    connect(timer, SIGNAL(timeout()), SLOT(timeout()));
+    timer->start(3000);
+    gps = new GpsTools();
 }
 
 Widget::~Widget()
@@ -93,4 +99,11 @@ void Widget::onRegionChanged(QMCoordinateRegion region)
             QString::number(region.south()),
             QString::number(region.southEast().longitude())),
         " ");
+}
+
+void Widget::timeout()
+{
+    GPS g = gps->getGpsData();
+    qDebug() << "REturning gps value" << g.lat << g.lng;
+    _mapView->setCenter(QMCoordinate(g.lat, g.lng));
 }

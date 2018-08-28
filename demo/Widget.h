@@ -23,7 +23,9 @@
 #include <QTextEdit>
 #include <QMMapView.h>
 #include <QMCoordinateRegion.h>
+#include <QTimer>
 
+class GpsTools;
 class Widget : public QWidget
 {
     Q_OBJECT
@@ -40,12 +42,15 @@ private slots:
     void onMapLoaded();
     void onMapBecameIdle();
     void onRegionChanged(QMCoordinateRegion region);
+    void timeout();
 
 private:
     QMMapView *_mapView;
     QWidget *_controls;
     QTextEdit *_logger;
     void buildControls();
+    QTimer *timer;
+    GpsTools *gps;
 };
 
 #endif // WIDGET_H

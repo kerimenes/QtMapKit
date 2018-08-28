@@ -15,6 +15,8 @@ INCLUDEPATH += ../src
 LIBS += -L../lib -lqtmapkit
 
 SOURCES += main.cpp\
-        Widget.cpp
+        Widget.cpp \
+    gpstools.cpp
 
-HEADERS  += Widget.h
+HEADERS  += Widget.h \
+    gpstools.h
