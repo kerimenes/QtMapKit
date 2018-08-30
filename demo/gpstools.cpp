@@ -1,14 +1,14 @@
 #include "gpstools.h"
 
-#include <QTcpServer>
 #include <QTcpSocket>
 
 GpsTools::GpsTools(QObject *parent) : QObject(parent)
 {
-    tcp = new QTcpServer();
-    tcp->listen(QHostAddress::Any, 9070);
-    connect(tcp, SIGNAL(newConnection()),this, SLOT(newConnection()));
-    gps.lat = 39;
+	sock = new QTcpSocket();
+	sock->connectToHost("172.1.1.1", 9070);
+	connect(sock, SIGNAL(connected()), SLOT(newConnection()));
+	connect(sock, SIGNAL(readyRead()), SLOT(newData()));
+	gps.lat = 39;
     gps.lng = 38;
 }
 
@@ -19,9 +19,7 @@ GPS GpsTools::getGpsData()
 
 void GpsTools::newConnection()
 {
-    sock = tcp->nextPendingConnection();
-    qDebug() << "new connection" << sock->peerAddress().toString() << sock->peerPort();
-    connect(sock, SIGNAL(readyRead()), this, SLOT(newData()));
+	qDebug() << "connected";
 }
 
 void GpsTools::newData()
@@ -30,5 +28,5 @@ void GpsTools::newData()
     qDebug() << "incoming data " << data;
     QStringList flds = data.split(";");
     gps.lat = flds.first().toFloat();
-    gps.lng = flds.last().toFloat();
+	gps.lng = flds.at(1).toFloat();
 }
